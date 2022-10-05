@@ -1,0 +1,19 @@
+{
+    "prefix": "your prefix here",
+    "color": {
+        "play": "#ffcc00",
+        "queue": "#2e4e6e",
+        "info": "#666ded",
+        "success": "#44eb89",
+        "error": "#e31b3d"
+    },
+    "token": "your token here",
+    "emoji": {
+        "play": "▶️",
+        "stop": "⏹️",
+        "queue": "📄",
+        "success": "☑️",
+        "repeat": "🔁",
+        "error": "❌"
+    }
+}
