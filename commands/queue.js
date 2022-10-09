@@ -9,7 +9,7 @@ module.exports = {
     const queue = client.distube.getQueue(message)
     if (!queue) return message.channel.send(`${client.emotes.error} | There is nothing playing!`)
     const q = queue.songs
-      .map((song, i) => `${i === 0 ? 'Playing:' : `${i}.`} ${song.name} - \`${song.formattedDuration}\``)
+      .map((song, i) => `${i === 0 ? 'Playing:' : `${i}.`} ${song.name} - \`${song.formattedDuration}\` ${i === 0 ? `\n`: ''}`)
       .join('\n')
       let embed = new EmbedBuilder()
             .setColor(embedColor.info)
