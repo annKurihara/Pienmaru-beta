@@ -1,5 +1,5 @@
 const { DisTube } = require('distube')
-const { Client, Collection, GatewayIntentBits, EmbedBuilder } = require('discord.js')
+const { ActivityType, Client, Collection, GatewayIntentBits, EmbedBuilder } = require('discord.js')
 const { SpotifyPlugin } = require('@distube/spotify')
 const { SoundCloudPlugin } = require('@distube/soundcloud')
 const { YtDlpPlugin } = require('@distube/yt-dlp')
@@ -52,17 +52,25 @@ fs.readdir('./commands/', (err, files) => {
 
 client.on('ready', () => {
     console.log(`${client.user.tag} is ready to play music.`)
+    client.user.setStatus("online");
+    client.user.setActivity("Mom working OwO", { type: ActivityType.Watching });
 })
 
 client.on('messageCreate', async message => {
     if (message.author.bot || !message.guild) return
-    if (!message.content.startsWith(prefix)) return
+    if (!message.content.startsWith(prefix)) {
+        onMagicWords(message) 
+        return
+    } 
 
     const args = message.content.slice(prefix.length).trim().split(/ +/g)
     const command = args.shift().toLowerCase()
     const cmd = client.commands.get(command) || client.commands.get(client.aliases.get(command))
 
-    if (!cmd) return
+    if (!cmd) {
+        onMagicCommand(message) 
+        return
+    } 
     if (cmd.inVoiceChannel && !message.member.voice.channel) {
         return message.channel.send(`${client.emotes.error} | You must be in a voice channel!`)
     }
@@ -81,29 +89,14 @@ const status = queue =>
         }\` | Autoplay: \`${queue.autoplay ? 'On' : 'Off'}\``
 client.distube
     .on('playSong', (queue, song) => {
-        // queue.textChannel.send(
-        //     `${client.emotes.play} | Playing \`${song.name}\` - \`${song.formattedDuration}\`\nRequested by: ${
-        //     song.user
-        //     }\n${status(queue)}`
-        // )
         let embed = new EmbedBuilder()
             .setColor(embedColor.play)
             .setDescription(
                 `${client.emotes.play} Playing [${song.name}](${song.url}) - \`${song.formattedDuration}\``
             )
         queue.textChannel.send({ embeds: [embed]})
-
-        // fs.writeFile("songdata.json", song, function(err) {
-        //     if(err) {
-        //         return console.log(err);
-        //     }
-        //     console.log("The songfile was saved!");
-        // })
     })
     .on('addSong', (queue, song) => {
-        // queue.textChannel.send(
-        //     `${client.emotes.success} | Added ${song.name} - \`${song.formattedDuration}\` to the queue by ${song.user}`
-        // )
         let embed = new EmbedBuilder()
             .setColor(embedColor.queue)
             .setDescription(
@@ -144,21 +137,61 @@ client.distube
         queue.textChannel.send({ embeds: [embed]})
     })
 
-// // DisTubeOptions.searchSongs = true
-// .on("searchResult", (message, result) => {
-//     let i = 0
-//     message.channel.send(
-//         `**Choose an option from below**\n${result
-//             .map(song => `**${++i}**. ${song.name} - \`${song.formattedDuration}\``)
-//             .join("\n")}\n*Enter anything else or wait 60 seconds to cancel*`
-//     )
-// })
-// .on("searchCancel", message => message.channel.send(`${client.emotes.error} | Searching canceled`))
-// .on("searchInvalidAnswer", message =>
-//     message.channel.send(
-//         `${client.emotes.error} | Invalid answer! You have to enter the number in the range of the results`
-//     )
-// )
-// .on("searchDone", () => {})
+    async function onMagicWords(message) {
+        var magicWord = message.content.toLowerCase()
+        let reactPien = '🥺'
+                const customPien = message.guild.emojis.cache.find(emoji => 
+                    emoji.name === 'pieeennn');
+                if (customPien !== undefined) {
+                   reactPien = customPien
+                }
+        switch (magicWord) {
+            case 'pien':
+                message.react(reactPien);
+              break
+            case 'pn':
+                message.react(reactPien);
+              break
+            case 'gg':
+                message.reply('ez')
+              break
+        }
+    }
+
+    async function onMagicCommand(message) {
+        const args = message.content
+            .slice(prefix.length)
+            .trim()
+            .split(/ +/g);
+        const feat = args.shift().toLowerCase();
+        if (feat === "pats" || feat === "pat") {
+            const patter = message.author;
+            const patObject = args.join(' ')
+            const patObjectCount = message.mentions.users.size
+                
+            let patterId = patter.id.toString()
+                patterId = `<@${patterId}>`
+            let patDesc 
+            let patPic
+
+            if (patObjectCount >=2) {
+                patDesc = `Whoa calm down ${patter}, pat your nibbas one by one!`
+                patPic = "https://cdn.discordapp.com/attachments/836787532347473931/993412372901408838/hamster-shocked.gif"
+            }
+            else if (patObject === undefined || patterId === patObject) {
+                patDesc = `${patter} just patted themself out of loneliness! ;w;`
+                patPic = "https://cdn.discordapp.com/attachments/836787532347473931/993366450825859142/unknown.png"
+            }
+            else if (patObject) {
+                patDesc = `${patter} pats ${patObject}! UwU`
+                patPic = "https://cdn.discordapp.com/attachments/836787532347473931/993350614111240192/780860668898574347.gif"
+            }
+            let embed = new EmbedBuilder()
+                .setColor("#ffcc00")
+                .setDescription(patDesc)
+                .setImage(patPic)
+            message.reply({ embeds: [embed] })
+        }
+    }
 
 client.login(config.token)
