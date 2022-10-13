@@ -1,4 +1,5 @@
 const Discord = require('discord.js')
+const config = require('../config.json')
 
 module.exports = {
   name: 'help',
@@ -7,7 +8,7 @@ module.exports = {
     message.channel.send({
       embeds: [
         new Discord.EmbedBuilder()
-          .setColor('#ffcc00')
+          .setColor(config.color.pien)
           .setTitle('**PIENMARU HELP PAGE DESU OwO**')
           .setAuthor({ name: '※ Pien Corner Support Center ※', iconURL:'https://cdn.discordapp.com/attachments/836787532347473931/1024938174985809920/pn-amoeba.gif' })
           .setDescription('Pienmaru here! Below is the list of things I could do:')
