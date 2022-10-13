@@ -51,7 +51,7 @@ fs.readdir('./commands/', (err, files) => {
 })
 
 client.on('ready', () => {
-    console.log(`${client.user.tag} is ready to play music.`)
+    console.log(`${client.user.tag} is online!`)
     client.user.setStatus("online");
     client.user.setActivity("Mom working OwO", { type: ActivityType.Watching });
 })
@@ -104,13 +104,14 @@ client.distube
             )
         queue.textChannel.send({ embeds: [embed]})
     })
-    .on('addList', (queue, playlist) =>
-        queue.textChannel.send(
-            `${client.emotes.success} | Added \`${playlist.name}\` playlist (${
-                playlist.songs.length
-            } songs) to queue\n${status(queue)}`
-        )
-    )
+    .on('addList', (queue, playlist) => {
+        let embed = new EmbedBuilder()
+            .setColor(embedColor.queue)
+            .setDescription(
+                `Added playlist: \`${playlist.name}\` (${playlist.songs.length} songs) to queue`
+            )
+        queue.textChannel.send({ embeds: [embed]})
+    })
     .on('error', (queue, e) => {
         if (queue.textChannel) {
             let embed = new EmbedBuilder()
