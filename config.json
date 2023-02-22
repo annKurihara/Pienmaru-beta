@@ -8,7 +8,7 @@
         "success": "#44eb89",
         "error": "#e31b3d"
     },
-    "clientID":"insert Client ID here",
+    "clientID":"insert client ID here",
     "token": "insert token here",
     "emoji": {
         "play": "▶️",
