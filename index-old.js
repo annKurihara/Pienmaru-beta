@@ -1,11 +1,10 @@
 const { DisTube } = require('distube')
-const { ActivityType, Client, Collection, Events, GatewayIntentBits, EmbedBuilder } = require('discord.js')
+const { ActivityType, Client, Collection, GatewayIntentBits, EmbedBuilder } = require('discord.js')
 const { SpotifyPlugin } = require('@distube/spotify')
 const { SoundCloudPlugin } = require('@distube/soundcloud')
 const { YtDlpPlugin } = require('@distube/yt-dlp')
 
 const fs = require('fs')
-const path = require('node:path');
 const config = require('./config.json')
 const prefix = config.prefix
 const embedColor = config.color
@@ -34,12 +33,8 @@ client.distube = new DisTube(client, {
     ]
 })
 client.commands = new Collection()
-client.slashCommands = new Collection()
 client.aliases = new Collection()
 client.emotes = config.emoji
-
-const commandsPath = path.join(__dirname, 'slash');
-const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
 
 fs.readdir('./commands/', (err, files) => {
     if (err) return console.log('Could not find any commands!')
@@ -57,7 +52,7 @@ fs.readdir('./commands/', (err, files) => {
 
 client.on('ready', () => {
     console.log(`${client.user.tag} is online!`)
-    client.user.setStatus("online");    
+    client.user.setStatus("online");
     client.user.setActivity(
         "with mommy OwO"
         //"Mom working OwO", 
@@ -76,18 +71,13 @@ client.on('messageCreate', async message => {
     const command = args.shift().toLowerCase()
     const cmd = client.commands.get(command) || client.commands.get(client.aliases.get(command))
 
-    console.log("CMD", cmd)
-    if (!cmd || cmd === undefined || cmd.name === undefined) {
-        let embed = new EmbedBuilder()
-            .setColor(embedColor.error)
-            .setDescription(`I don't understand that command ;-; \n  Try ask my mom maybe?`)
-        return message.channel.send({ embeds: [embed]})
-    }
+
+    if (!cmd || cmd === undefined) {
+        onMagicCommand(message) 
+        return
+    } 
     if (cmd.inVoiceChannel && !message.member.voice.channel) {
-        let embed = new EmbedBuilder()
-            .setColor(embedColor.info)
-            .setDescription(`Can you hop into any voice channel first, please? :>`)
-        return message.channel.send({ embeds: [embed]})
+        return message.channel.send(`${client.emotes.error} | You must be in a voice channel!`)
     }
     try {
         cmd.run(client, message, args)
@@ -97,37 +87,16 @@ client.on('messageCreate', async message => {
     }
 })
 
-for (const file of commandFiles) {
-	const filePath = path.join(commandsPath, file);
-	const slashCommand = require(filePath);
-	// Set a new item in the Collection with the key as the slashCommand name and the value as the exported module
-	if ('data' in slashCommand && 'execute' in slashCommand) {
-		client.slashCommands.set(slashCommand.data.name, slashCommand);
-		console.log("COMMAND OK", slashCommand.data.name)
-	} else {
-		console.log(`[WARNING] The slashCommand at ${filePath} is missing a required "data" or "execute" property.`);
-	}
-}
-
-client.on(Events.InteractionCreate, async interaction => {
-	if (!interaction.isChatInputCommand()) return;
-	const slashCommand = client.slashCommands.get(interaction.commandName);
-	if (!slashCommand) return;
-
-	try {
-		await slashCommand.execute(interaction);
-	} catch (error) {
-		console.error(error);
-		await interaction.reply({ content: 'There was an error while executing this slashCommand!', ephemeral: true });
-	}
-});
-
+// const status = queue =>
+//     `Volume: \`${queue.volume}%\` | Filter: \`${queue.filters.names.join(', ') || 'Off'}\` | Loop: \`${
+//         queue.repeatMode ? (queue.repeatMode === 2 ? 'All Queue' : 'This Song') : 'Off'
+//         }\` | Autoplay: \`${queue.autoplay ? 'On' : 'Off'}\``
 client.distube
     .on('playSong', (queue, song) => {
         let embed = new EmbedBuilder()
             .setColor(embedColor.play)
             .setDescription(
-                `${client.emotes.play} \u200B Playing [${song.name}](${song.url}) - \`${song.formattedDuration}\``
+                `${client.emotes.play} Playing [${song.name}](${song.url}) - \`${song.formattedDuration}\``
             )
         queue.textChannel.send({ embeds: [embed]})
     })
@@ -163,12 +132,9 @@ client.distube
             .setDescription(`I left the channel since no one here ;-;`)
         queue.textChannel.send({ embeds: [embed]})
     })
-    .on('searchNoResult', (message, query) => {
-        let embed = new EmbedBuilder()
-            .setColor(embedColor.error)
-            .setDescription(`What is that (；A；) \n I can't find any song with that keyword...`)
-        message.channel.send({ embeds: [embed]})
-    })
+    .on('searchNoResult', (message, query) =>
+        message.channel.send(`${client.emotes.error} | No result found for \`${query}\`!`)
+    )
     .on('finish', queue => {
         let embed = new EmbedBuilder()
             .setColor(embedColor.info)
@@ -192,6 +158,42 @@ client.distube
             case 'gg':
                 message.reply('ez')
               break
+        }
+    }
+
+    async function onMagicCommand(message) {
+        const args = message.content
+            .slice(prefix.length)
+            .trim()
+            .split(/ +/g);
+        const feat = args.shift().toLowerCase();
+        if (feat === "pats" || feat === "pat") {
+            const patter = message.author;
+            const patObject = args.join(' ')
+            const patObjectCount = message.mentions.users.size
+                
+            let patterId = patter.id.toString()
+                patterId = `<@${patterId}>`
+            let patDesc 
+            let patPic
+
+            if (patObjectCount >=2) {
+                patDesc = `Whoa calm down ${patter}, pat your nibbas one by one!`
+                patPic = "https://cdn.discordapp.com/attachments/836787532347473931/993412372901408838/hamster-shocked.gif"
+            }
+            else if (patObject === undefined || patterId === patObject) {
+                patDesc = `${patter} just patted themself out of loneliness! ;w;`
+                patPic = "https://cdn.discordapp.com/attachments/836787532347473931/993366450825859142/unknown.png"
+            }
+            else if (patObject) {
+                patDesc = `${patter} pats ${patObject}! UwU`
+                patPic = "https://cdn.discordapp.com/attachments/836787532347473931/993350614111240192/780860668898574347.gif"
+            }
+            let embed = new EmbedBuilder()
+                .setColor("#ffcc00")
+                .setDescription(patDesc)
+                .setImage(patPic)
+            message.reply({ embeds: [embed] })
         }
     }
 

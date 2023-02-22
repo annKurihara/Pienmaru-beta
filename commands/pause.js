@@ -1,15 +1,25 @@
+const { EmbedBuilder } = require('discord.js')
+const config = require('../config.json')
+
 module.exports = {
   name: 'pause',
   aliases: ['pause', 'hold'],
   inVoiceChannel: true,
   run: async (client, message) => {
     const queue = client.distube.getQueue(message)
-    if (!queue) return message.channel.send(`${client.emotes.error} | There is nothing in the queue right now!`)
+    if (!queue) {
+      let embed = new EmbedBuilder()
+        .setColor(config.color.error)
+        .setDescription(
+            `There is nothing playing right now!`
+        )
+      return message.channel.send({ embeds: [embed]})  
+    }
     if (queue.paused) {
       queue.resume()
-      return message.channel.send('Resumed the song for you :)')
+      return message.react(config.emoji.play)
     }
     queue.pause()
-    message.channel.send('Paused the song for you :)')
+    return message.react(config.emoji.pause)
   }
 }

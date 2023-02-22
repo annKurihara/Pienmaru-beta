@@ -1,0 +1,24 @@
+{
+    "prefix": "pnb",
+    "token": "MTAyNTIwNjg3NzU0NzY3NTY2OA.GbX0re.tsZavlnla_VieqNa9fRxtRG5ZHwXE2jE1sWzvw",
+    "tokenpika": "OTA1NzMxNjI3MjU3MzExMjUy.GcWYfg.XQ-yypMr8dKYpyUKh3W8sW58xd01G1lVvRp7Go",
+    "tokenmkii": "OTA1NzY4Njg0NTI4NzQyNDAw.YYO40g.Gx3meC6FagT4AxFHvixnC7I8R-4",
+    "tokena": "OTkxNTI0NjMyNjQzNTEwMjgy.GUW04y.yP_ckG1oRsP_z82S3DYSkrGEkr4pfVLJZtXhJo",
+    "tokenb": "MTAyNTIwNjg3NzU0NzY3NTY2OA.GbX0re.tsZavlnla_VieqNa9fRxtRG5ZHwXE2jE1sWzvw",
+    "emoji": {
+        "play": "▶️",
+        "stop": "⏹️",
+        "queue": "📄",
+        "success": "☑️",
+        "repeat": "🔁",
+        "error": "❌"
+    },
+    "color": {
+        "pien": "#ffcc00",
+        "play": "#ffcc00",
+        "queue": "#2e4e6e",
+        "info": "#666ded",
+        "success": "#44eb89",
+        "error": "#e31b3d"
+    }
+  }

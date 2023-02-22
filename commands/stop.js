@@ -3,17 +3,24 @@ const config = require('../config.json')
 
 module.exports = {
   name: 'stop',
-  aliases: ['disconnect', 'leave', 'x'],
+  aliases: ['x'],
   inVoiceChannel: true,
   run: async (client, message) => {
     const queue = client.distube.getQueue(message)
-    if (!queue) return message.channel.send(`${client.emotes.error} | There is nothing in the queue right now!`)
+    if (!queue) {
+      let embed = new EmbedBuilder()
+        .setColor(config.color.error)
+        .setDescription(
+          `There is nothing in the queue right now!`
+        )
+      return message.channel.send({ embeds: [embed]})  
+    }
     queue.stop()
     let embed = new EmbedBuilder()
-            .setColor(config.color.error)
-            .setDescription(
-                `Queue stopped!`
-            )
-      message.channel.send({ embeds: [embed]})
+      .setColor(config.color.error)
+      .setDescription(
+        `Queue stopped!`
+      )
+    message.channel.send({ embeds: [embed]})
   }
 }

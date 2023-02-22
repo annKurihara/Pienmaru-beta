@@ -1,5 +1,5 @@
 {
-    "prefix": "your prefix here",
+    "prefix": "pn.",
     "color": {
         "pien": "#ffcc00",
         "play": "#ffcc00",
@@ -8,10 +8,12 @@
         "success": "#44eb89",
         "error": "#e31b3d"
     },
-    "token": "your token here",
+    "clientID":"905768684528742400",
+    "token": "OTA1NzY4Njg0NTI4NzQyNDAw.YYO40g.Gx3meC6FagT4AxFHvixnC7I8R-4",
     "emoji": {
         "play": "▶️",
         "stop": "⏹️",
+        "pause": "⏸️",
         "queue": "📄",
         "success": "☑️",
         "repeat": "🔁",
