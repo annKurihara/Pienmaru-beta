@@ -1,3 +1,2 @@
-conf
-index-backup.js
-songdata-sample.json
+config.json
+index-old.js
